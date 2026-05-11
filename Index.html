@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Calculadora Matemática Profesional</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, sans-serif;
+}
+
+body{
+    background: linear-gradient(135deg,#0f172a,#1e293b,#334155);
+    min-height:100vh;
+    color:white;
+    overflow-x:hidden;
+}
+
+header{
+    width:100%;
+    padding:25px;
+    text-align:center;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    box-shadow:0 4px 20px rgba(0,0,0,0.3);
+}
+
+header h1{
+    font-size:40px;
+    color:#38bdf8;
+}
+
+header p{
+    margin-top:10px;
+    color:#cbd5e1;
+}
+
+.main-menu{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:30px;
+    padding:60px 20px;
+}
+
+.card{
+    width:280px;
+    background: rgba(255,255,255,0.08);
+    border-radius:25px;
+    padding:30px;
+    text-align:center;
+    transition:0.4s;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.card:hover{
+    transform:translateY(-10px) scale(1.03);
+}
+
+.card h2{
+    margin-bottom:15px;
+    color:#38bdf8;
+}
+
+.card p{
+    color:#e2e8f0;
+    margin-bottom:20px;
+}
+
+.card button{
+    padding:12px 20px;
+    border:none;
+    border-radius:12px;
+    background:#38bdf8;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card button:hover{
+    background:#0ea5e9;
+}
+
+.page{
+    display:none;
+    padding:40px;
+    max-width:1000px;
+    margin:auto;
+}
+
+.container{
+    background: rgba(255,255,255,0.08);
+    border-radius:25px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2{
+    color:#38bdf8;
+    margin-bottom:20px;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+}
+
+.action-btn{
+    margin-top:15px;
+    padding:14px 25px;
+    border:none;
+    border-radius:12px;
+    background:#22c55e;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.action-btn:hover{
+    background:#16a34a;
+}
+
+.back-btn{
+    margin-bottom:20px;
+    padding:10px 20px;
+    border:none;
+    border-radius:10px;
+    background:#ef4444;
+    color:white;
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:#dc2626;
+}
+
+.resultado{
+    margin-top:20px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.1);
+    color:#f8fafc;
+}
+
+canvas{
+    margin-top:30px;
+    background:white;
+    border-radius:15px;
+    padding:10px;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Calculadora Matemática</h1>
+    <p>Rectas, Cuadráticas y Sistemas 2x2</p>
+</header>
+
+<!-- MENU PRINCIPAL -->
+
+<div id="menu" class="main-menu">
+
+    <div class="card">
+        <h2>Recta</h2>
+        <p>Grafica ecuaciones lineales usando pendiente o dos puntos.</p>
+        <button onclick="abrirPagina('rectaPage')">Abrir</button>
+    </div>
+
+    <div class="card">
+        <h2>Cuadrática</h2>
+        <p>Resuelve ecuaciones cuadráticas y grafica parábolas.</p>
+        <button onclick="abrirPagina('cuadraticaPage')">Abrir</button>
+    </div>
+
+    <div class="card">
+        <h2>Sistema 2x2</h2>
+        <p>Encuentra la solución de sistemas lineales.</p>
+        <button onclick="abrirPagina('sistemaPage')">Abrir</button>
+    </div>
+
+</div>
+
+<!-- PAGINA RECTA -->
+
+<div id="rectaPage" class="page">
+
+<button class="back-btn" onclick="volverMenu()">⬅ Regresar</button>
+
+<div class="container">
+
+<h2>Ecuación de la Recta</h2>
+
+<select id="metodoRecta">
+    <option value="1">Pendiente y ordenada</option>
+    <option value="2">Dos puntos</option>
+</select>
+
+<div id="pendienteInputs">
+
+<input type="number" id="m" placeholder="Pendiente m">
+<input type="number" id="b" placeholder="Ordenada b">
+
+</div>
+
+<div id="puntosInputs" style="display:none;">
+
+<input type="number" id="x1" placeholder="x1">
+<input type="number" id="y1" placeholder="y1">
+<input type="number" id="x2" placeholder="x2">
+<input type="number" id="y2" placeholder="y2">
+
+</div>
+
+<button class="action-btn" onclick="graficarRecta()">Graficar</button>
+
+<div class="resultado" id="resultadoRecta"></div>
+
+<canvas id="graficaRecta"></canvas>
+
+</div>
+</div>
+
+<!-- PAGINA CUADRATICA -->
+
+<div id="cuadraticaPage" class="page">
+
+<button class="back-btn" onclick="volverMenu()">⬅ Regresar</button>
+
+<div class="container">
+
+<h2>Ecuación Cuadrática</h2>
+
+<input type="number" id="a" placeholder="a">
+<input type="number" id="bb" placeholder="b">
+<input type="number" id="c" placeholder="c">
+
+<button class="action-btn" onclick="resolverCuadratica()">Resolver</button>
+
+<div class="resultado" id="resultadoCuadratica"></div>
+
+<canvas id="graficaCuadratica"></canvas>
+
+</div>
+</div>
+
+<!-- PAGINA SISTEMA -->
+
+<div id="sistemaPage" class="page">
+
+<button class="back-btn" onclick="volverMenu()">⬅ Regresar</button>
+
+<div class="container">
+
+<h2>Sistema 2x2</h2>
+
+<input type="number" id="a1" placeholder="a1">
+<input type="number" id="b1" placeholder="b1">
+<input type="number" id="c1" placeholder="c1">
+
+<input type="number" id="a2" placeholder="a2">
+<input type="number" id="b2" placeholder="b2">
+<input type="number" id="c2" placeholder="c2">
+
+<button class="action-btn" onclick="resolverSistema()">Resolver</button>
+
+<div class="resultado" id="resultadoSistema"></div>
+
+<canvas id="graficaSistema"></canvas>
+
+</div>
+</div>
+
+<script>
+
+function abrirPagina(id){
+
+    document.getElementById("menu").style.display="none";
+
+    document.querySelectorAll(".page").forEach(p=>{
+        p.style.display="none";
+    });
+
+    document.getElementById(id).style.display="block";
+}
+
+function volverMenu(){
+
+    document.querySelectorAll(".page").forEach(p=>{
+        p.style.display="none";
+    });
+
+    document.getElementById("menu").style.display="flex";
+}
+
+document.getElementById("metodoRecta").addEventListener("change",function(){
+
+    if(this.value=="1"){
+        document.getElementById("pendienteInputs").style.display="block";
+        document.getElementById("puntosInputs").style.display="none";
+    }else{
+        document.getElementById("pendienteInputs").style.display="none";
+        document.getElementById("puntosInputs").style.display="block";
+    }
+
+});
+
+let chartRecta;
+let chartCuadratica;
+let chartSistema;
+
+function graficarRecta(){
+
+    let metodo=document.getElementById("metodoRecta").value;
+
+    let m,b;
+
+    if(metodo=="1"){
+
+        m=parseFloat(document.getElementById("m").value);
+        b=parseFloat(document.getElementById("b").value);
+
+    }else{
+
+        let x1=parseFloat(document.getElementById("x1").value);
+        let y1=parseFloat(document.getElementById("y1").value);
+        let x2=parseFloat(document.getElementById("x2").value);
+        let y2=parseFloat(document.getElementById("y2").value);
+
+        m=(y2-y1)/(x2-x1);
+        b=y1-(m*x1);
+    }
+
+    document.getElementById("resultadoRecta").innerHTML=
+    `Ecuación: y = ${m.toFixed(2)}x + ${b.toFixed(2)}`;
+
+    let datos=[];
+
+    for(let x=-10;x<=10;x+=0.5){
+        datos.push({x:x,y:m*x+b});
+    }
+
+    if(chartRecta) chartRecta.destroy();
+
+    chartRecta=new Chart(document.getElementById("graficaRecta"),{
+        type:'line',
+        data:{
+            datasets:[{
+                label:'Recta',
+                data:datos,
+                borderColor:'#38bdf8',
+                borderWidth:3
+            }]
+        },
+        options:{
+            parsing:false,
+            scales:{
+                x:{type:'linear',position:'bottom'}
+            }
+        }
+    });
+
+}
+
+function resolverCuadratica(){
+
+    let a=parseFloat(document.getElementById("a").value);
+    let b=parseFloat(document.getElementById("bb").value);
+    let c=parseFloat(document.getElementById("c").value);
+
+    let d=(b*b)-(4*a*c);
+
+    let texto="";
+
+    if(d>0){
+
+        let x1=(-b+Math.sqrt(d))/(2*a);
+        let x2=(-b-Math.sqrt(d))/(2*a);
+
+        texto=`Dos soluciones reales:<br>x1 = ${x1.toFixed(2)}<br>x2 = ${x2.toFixed(2)}`;
+
+    }else if(d==0){
+
+        let x=-b/(2*a);
+
+        texto=`Una solución real:<br>x = ${x.toFixed(2)}`;
+
+    }else{
+
+        texto="No hay soluciones reales";
+    }
+
+    document.getElementById("resultadoCuadratica").innerHTML=texto;
+
+    let datos=[];
+
+    for(let x=-10;x<=10;x+=0.1){
+        datos.push({x:x,y:a*x*x+b*x+c});
+    }
+
+    if(chartCuadratica) chartCuadratica.destroy();
+
+    chartCuadratica=new Chart(document.getElementById("graficaCuadratica"),{
+        type:'line',
+        data:{
+            datasets:[{
+                label:'Parábola',
+                data:datos,
+                borderColor:'#22c55e',
+                borderWidth:3
+            }]
+        },
+        options:{
+            parsing:false,
+            scales:{
+                x:{type:'linear',position:'bottom'}
+            }
+        }
+    });
+
+}
+
+function resolverSistema(){
+
+    let a1=parseFloat(document.getElementById("a1").value);
+    let b1=parseFloat(document.getElementById("b1").value);
+    let c1=parseFloat(document.getElementById("c1").value);
+
+    let a2=parseFloat(document.getElementById("a2").value);
+    let b2=parseFloat(document.getElementById("b2").value);
+    let c2=parseFloat(document.getElementById("c2").value);
+
+    let det=(a1*b2)-(a2*b1);
+
+    if(det==0){
+
+        document.getElementById("resultadoSistema").innerHTML=
+        "El sistema no tiene solución única";
+
+        return;
+    }
+
+    let xSol=((c1*b2)-(c2*b1))/det;
+    let ySol=((a1*c2)-(a2*c1))/det;
+
+    document.getElementById("resultadoSistema").innerHTML=
+    `x = ${xSol.toFixed(2)}<br>y = ${ySol.toFixed(2)}`;
+
+    let datos1=[];
+    let datos2=[];
+
+    for(let x=-10;x<=10;x+=0.5){
+
+        datos1.push({
+            x:x,
+            y:(c1-a1*x)/b1
+        });
+
+        datos2.push({
+            x:x,
+            y:(c2-a2*x)/b2
+        });
+
+    }
+
+    if(chartSistema) chartSistema.destroy();
+
+    chartSistema=new Chart(document.getElementById("graficaSistema"),{
+        type:'line',
+        data:{
+            datasets:[
+                {
+                    label:'Ecuación 1',
+                    data:datos1,
+                    borderColor:'#f97316',
+                    borderWidth:3
+                },
+                {
+                    label:'Ecuación 2',
+                    data:datos2,
+                    borderColor:'#e11d48',
+                    borderWidth:3
+                }
+            ]
+        },
+        options:{
+            parsing:false,
+            scales:{
+                x:{type:'linear',position:'bottom'}
+            }
+        }
+    });
+
+}
+
+</script>
+
+</body>
+</html>
